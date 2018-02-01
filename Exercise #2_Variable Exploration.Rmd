@@ -1,11 +1,9 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Final Project_Melissa Howlett"
+date: "February 1, 2017"
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+STEP 1: get data and confirm it's in the right format
 
 ```{r}
 
@@ -17,20 +15,28 @@ is.data.frame(faostat)
 
 ```
 
+STEP 2: install the libraries needed later
+
 ```{r}
-#install libraries needed later
+#install libraries
 library(DescTools)
 library(ggplot2)
 library(moments)
 library(stringr)
 library(scales)
 
+```
 
+STEP 3: see what data we have
+
+```{r}
 #review data called
 head(faostat)
 str(faostat)
 names(faostat)
 ```
+
+STEP 4: isolate each variable and aggregate crop data by country
 
 ```{r}
 ##YIELD##
@@ -69,10 +75,9 @@ names(area_harv)=c('country','TotAreaHarv2016')
 area_harv
 ```
 
+STEP 5: conduct univariate analysis of yield
 
 ```{r}
-
-#UNIVARIATE ANALYSIS
 
 #check data types
 str(yield)
@@ -110,21 +115,6 @@ hist(log(data$'TotYield2016'))
 mnVar=mean(var,na.rm=T)
 sdVar=sd(var,na.rm=T)
 
-# ##select a var
-# var=data$'TotYield2016'
-
-# ##plotting
-# base=ggplot(data,aes(x=var))
-# hist=base + geom_histogram(fill="green",
-#                          color='grey',
-#                          aes(y=..density..))
-# 
-# histAndNormal=hist + stat_function(fun=dnorm,
-#                                    color="red",
-#                                    args=list(mean=mnVar,sd=sdVar))
-# 
-# histAndNormal
-
 #outliers
 summary(yield$'TotYield2016')
 
@@ -134,15 +124,19 @@ summary(yield$'TotYield2016')
 ##boxplot of log
 (bp_log=boxplot(log(yield$'TotYield2016')))
 
+#show values of both boxplots
 bp$stats
 bp_log$stats
 
+#show number of outliers
+length(bp$out)
 length(bp_log$out)
 
 ```
 
+STEP 6: conduct bivariate analysis of yield, using production and area harvested
+
 ```{r}
-##BIVARIATE ANALYSIS
 
 #merge yield, production, and area harvested data into one dataset
 combinedYP=merge(yield,prod)
@@ -166,7 +160,7 @@ scatterplotMatrix(combinedYPAH[,c(2:4)],
 scatterplotMatrix(log(combinedYPAH[,c(2:4)]),
                   main="Simple Scatterplot Matrix")
 
-#non-parametric
+#non-parametric correlation
 cor(combinedYPAH[,c(2:4)],use='complete.obs',method='spearman')
 
 ```
